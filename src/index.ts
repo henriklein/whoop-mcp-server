@@ -341,7 +341,11 @@ async function main(): Promise<void> {
 		process.stderr.write('Whoop MCP server running on stdio\n');
 	} else {
 		const app = express();
-		app.use(express.json());
+
+		app.get('/auth', (_req: Request, res: Response) => {
+			const scopes = ['read:profile', 'read:body_measurement', 'read:cycles', 'read:recovery', 'read:sleep', 'read:workout', 'offline'];
+			res.redirect(client.getAuthorizationUrl(scopes));
+		});
 
 		app.get('/callback', async (req: Request, res: Response) => {
 			const code = req.query.code as string | undefined;
